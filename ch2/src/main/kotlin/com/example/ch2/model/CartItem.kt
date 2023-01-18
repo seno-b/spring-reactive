@@ -6,4 +6,8 @@ data class CartItem(
     var quantity: Int = 1,
 ) {
 
+    fun increment() {
+        quantity++
+    }
+
 }
