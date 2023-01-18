@@ -4,6 +4,7 @@ import com.example.ch2.model.Cart
 import com.example.ch2.model.CartItem
 import com.example.ch2.repository.CartRepository
 import com.example.ch2.repository.ItemRepository
+import com.example.ch2.service.CartService
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -16,6 +17,7 @@ import reactor.core.publisher.Mono
 class HomeController(
     private val itemRepository: ItemRepository,
     private val cartRepository: CartRepository,
+    private val cartService: CartService
 ) {
 
     @GetMapping("/home")
@@ -33,28 +35,7 @@ class HomeController(
 
     @PostMapping("/add/{id}")
     fun addToCart(@PathVariable id: String): Mono<String> {
-        val myCart = this.cartRepository.findById("My Cart")
-            .defaultIfEmpty(Cart("My Cart"))
-
-        return myCart.flatMap { cart ->
-            cart.cartItems.stream()
-                .filter { cartItem ->
-                    cartItem.item.id.equals(id)
-                }
-                .findAny()
-                .map { cartItem ->
-                    cartItem.increment()
-                    Mono.just(cart)
-                }
-                .orElseGet {
-                    itemRepository.findById(id)
-                        .map { CartItem(it) }
-                        .map {
-                            cart.cartItems.add(it)
-                            cart
-                        }
-                }
-        }.flatMap(cartRepository::save)
+        return this.cartService.addToCart("My Cart", id)
             .thenReturn("redirect:/home")
     }
 }
