@@ -11,9 +11,10 @@ interface ItemRepository: ReactiveCrudRepository<Item, String>, ReactiveQueryByE
     fun findByNameContaining(partialName: String): Flux<Item>
 
     // 사용자 정의 query 방식
-    @Query("{ 'name' :  ?0, 'age' :  ?1 }")
-    fun findItemsForCustomerMonthlyReport(name: String, age: Int): Flux<Item>
+    @Query("{ 'name' :  ?0, 'price' :  ?1 }")
+    fun findItemsForCustomerMonthlyReport(name: String, age: Double): Flux<Item>
 
-    @Query(sort = "{ 'age' :  -1 }")
-    fun findSortedStuffForWeeklyReport(): Flux<Item>
+    // 외않대?
+//    @Query(sort = "{ name : -1 }")
+//    fun findSortedStuffForWeeklyReport(): Flux<Item>
 }
